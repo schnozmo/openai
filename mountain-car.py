@@ -31,7 +31,7 @@ class TabQLearner():
     def update(self, state, action, state_prime, r):
         td_new_tgt = r + self.gamma * self.q[state_prime[0], state_prime[1]].max()
         td_diff = td_new_tgt - self.q[state[0], state[1], action]
-        self.e_trace[state[0], state[1], action] += 1
+        self.e_trace[state[0], state[1], action] = 1
 
         #print(f"UPDATE: {state}, {action}, {state_prime}, {r} --> {td_new_tgt}, {td_diff}")
 
@@ -40,7 +40,7 @@ class TabQLearner():
             for s2 in range(self.q.shape[1]):
                 for a in range(self.q.shape[2]):
                     self.q[s1, s2, a] = self.q[s1, s2, a] + (self.alpha * td_diff * self.e_trace[s1, s2, a])
-                    self.e_trace[s1, s2, a] = self.gamma * self.lval * self.e_trace[s1, s2, a]
+                    self.e_trace[s1, s2, a] = self.decay * self.lval * self.e_trace[s1, s2, a]
 
     def epsDecay(self):
         self.eps *= self.decay
